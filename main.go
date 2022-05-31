@@ -27,7 +27,7 @@ func parseCmd() {
 	flag.IntVar(&c.Port, "p", 8080, "Port to listen stdout from command")
 	flag.StringVar(&c.Uri, "u", "http://localhost:8080", "URI for the vulnerable application")
 	flag.StringVar(&c.Method, "m", "GET", "HTTP method to use")
-	flag.StringVar(&c.Exploit, "e", "", "Exploit to use")
+	flag.StringVar(&c.Exploit, "e", "spel", "Exploit to use")
 
 	flag.Parse()
 }
@@ -65,7 +65,13 @@ func cmdFunction(t string) {
 
 func main() {
 	parseCmd()
-	var expl = exploit.Spel{} // how to parametrize?
+	//var expl = exploit.Spel{} // how to parametrize?
+	//var expl = exploit.Jsonpickle{}
+	var expl = exploit.GetExploit(c.Exploit)
+	if expl == nil {
+		exploit.PrintAvailableExploit()
+		os.Exit(1)
+	}
 	var listen = listener.Tcp{}
 
 	var e = new(exploit.Endpoint)
